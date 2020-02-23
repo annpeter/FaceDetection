@@ -54,6 +54,16 @@ public class Utils {
     public static Mat loadResource(Context context, int resourceId, int flags) throws IOException
     {
         InputStream is = context.getResources().openRawResource(resourceId);
+        Mat decoded = loadResource(is, flags);
+        is.close();
+        return decoded;
+    }
+
+    public static Mat loadResource(InputStream is) throws IOException {
+        return loadResource(is, -1);
+    }
+
+    public static Mat loadResource(InputStream is, int flags)throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream(is.available());
 
         byte[] buffer = new byte[4096];
@@ -61,17 +71,16 @@ public class Utils {
         while ((bytesRead = is.read(buffer)) != -1) {
             os.write(buffer, 0, bytesRead);
         }
-        is.close();
 
-        Mat encoded = new Mat(1, os.size(), CvType.CV_8U);
+        Mat encoded = new Mat(1, os.size(), CvType.CV_8UC1);
         encoded.put(0, 0, os.toByteArray());
         os.close();
 
         Mat decoded = Imgcodecs.imdecode(encoded, flags);
         encoded.release();
-
         return decoded;
     }
+
 
     /**
      * Converts Android Bitmap to OpenCV Mat.

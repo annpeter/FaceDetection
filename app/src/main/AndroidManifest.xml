@@ -10,7 +10,11 @@
         android:smallScreens="true" />
 
     <application
+        android:largeHeap="true"
+        android:allowBackup="true"
         android:icon="@drawable/icon"
+        android:supportsRtl="true"
+        android:theme="@style/FullscreenTheme"
         android:label="@string/app_name">
 
         <activity
