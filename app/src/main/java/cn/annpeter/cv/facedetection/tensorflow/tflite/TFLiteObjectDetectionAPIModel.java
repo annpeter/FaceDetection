@@ -14,6 +14,7 @@ import org.opencv.core.MatOfFloat4;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.samples.facedetect.DetectResult;
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -24,9 +25,6 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
-
-import javaslang.Tuple;
-import javaslang.Tuple3;
 
 import static org.opencv.core.Core.NORM_MINMAX;
 
@@ -118,7 +116,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public Tuple3<Rect[], Integer, Integer> detectObject(Mat mRgba) {
+    public DetectResult detectObject(Mat mRgba) {
         imgData.rewind();
 
         MatOfFloat4 colorOut = null;
@@ -168,7 +166,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
             Log.d("FACE", "预测耗时" + (l2 - l) + "   总耗时：" + (System.currentTimeMillis() - l));
 
-            return Tuple.of(rects,  (int)(l2 - l),  (int) (System.currentTimeMillis() - l));
+            return new DetectResult(rects,  (int)(l2 - l),  (int) (System.currentTimeMillis() - l));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

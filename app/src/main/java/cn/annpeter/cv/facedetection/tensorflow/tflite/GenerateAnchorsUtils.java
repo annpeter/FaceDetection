@@ -4,7 +4,6 @@ package cn.annpeter.cv.facedetection.tensorflow.tflite;
 import java.util.LinkedList;
 import java.util.List;
 
-import javaslang.collection.Stream;
 
 public class GenerateAnchorsUtils {
 
@@ -15,8 +14,8 @@ public class GenerateAnchorsUtils {
         for (int idx = 0; idx < featureMapSizes.length; idx++) {
             float[] featureSize = featureMapSizes[idx];
 
-            Float[] cx = Stream.ofAll(linespace(0, featureSize[0] - 1, (int) (featureSize[0]))).map(item -> (item + 0.5F) / featureSize[0]).toJavaArray(Float.class);
-            Float[] cy = Stream.ofAll(linespace(0, featureSize[1] - 1, (int) (featureSize[1]))).map(item -> (item + 0.5F) / featureSize[1]).toJavaArray(Float.class);
+            float[] cx = getData(linespace(0, featureSize[0] - 1, (int) (featureSize[0])), featureSize[0]);
+            float[] cy = getData(linespace(0, featureSize[1] - 1, (int) (featureSize[1])), featureSize[0]);
 
             float[][] cxGrid = meshgrid(cx, cy);
             float[][] cyGrid = reverse(cxGrid);
@@ -31,7 +30,7 @@ public class GenerateAnchorsUtils {
                 float scale = anchorSize[i];
                 float ratio = anchorRatios[idx][0];
                 float width = (float) (scale * Math.sqrt(ratio));
-                float height = (float)(scale / Math.sqrt(ratio));
+                float height = (float) (scale / Math.sqrt(ratio));
 
                 anchorWidthHeightList.add(-width / 2.0);
                 anchorWidthHeightList.add(-height / 2.0);
@@ -45,8 +44,8 @@ public class GenerateAnchorsUtils {
                 float ratio = anchorRatio[i];
                 float s1 = anchorSize[0];
 
-                float width = (float)(s1 * Math.sqrt(ratio));
-                float height = (float)(s1 / Math.sqrt(ratio));
+                float width = (float) (s1 * Math.sqrt(ratio));
+                float height = (float) (s1 / Math.sqrt(ratio));
 
                 anchorWidthHeightList.add(-width / 2.0);
                 anchorWidthHeightList.add(-height / 2.0);
@@ -68,13 +67,20 @@ public class GenerateAnchorsUtils {
         return addTotal(list, size);
     }
 
+    private static float[] getData(float[] data, float featureSize) {
+        float[] res = new float[data.length];
+        for (int i = 0; i < data.length; i++) {
+            res[i] = (data[i] + 0.5F) / featureSize;
+        }
+        return res;
+    }
 
-    private static float[][] addTotal(List<float[][]> list, int size){
+    private static float[][] addTotal(List<float[][]> list, int size) {
         float[][] result = new float[size][4];
 
         int index = 0;
-        for (float[][] array: list){
-            for (float[] line: array) {
+        for (float[][] array : list) {
+            for (float[] line : array) {
                 result[index++] = line;
             }
         }
@@ -134,7 +140,7 @@ public class GenerateAnchorsUtils {
 
 
     // 坐标矩阵
-    private static float[][] meshgrid(Float[] cx, Float[] cy) {
+    private static float[][] meshgrid(float[] cx, float[] cy) {
         float[][] result = new float[cx.length][cy.length];
 
         for (int j = 0; j < cy.length; j++) {
@@ -161,7 +167,7 @@ public class GenerateAnchorsUtils {
 
     // 等差数列
     private static float[] linespace(float start, float end, int count) {
-        float space = (count-1) / (end - start);
+        float space = (count - 1) / (end - start);
 
         float[] result = new float[count];
 

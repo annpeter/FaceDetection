@@ -1,14 +1,12 @@
 package cn.annpeter.cv.facedetection.tensorflow.tflite;
 
 
+import android.util.Pair;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javaslang.Tuple;
-import javaslang.Tuple2;
-
 
 public class MnsUtils {
 
@@ -148,15 +146,19 @@ public class MnsUtils {
     }
 
     private static List<Integer> getConfIndex(float[] confidences) {
-        List<Tuple2<Float, Integer>> list = new ArrayList<>();
+        List<Pair<Float, Integer>> list = new ArrayList<>();
 
         for (int i = 0; i < confidences.length; i++) {
-            list.add(Tuple.of(confidences[i], i));
+            list.add(Pair.create(confidences[i], i));
         }
 
-        List<Tuple2<Float, Integer>> collect = list.stream().sorted((item1, item2) -> (int) (item1._1 - item2._1)).collect(Collectors.toList());
+        Collections.sort(list, (o1, o2) -> (int) (o1.first - o2.first));
 
-        return collect.stream().map(item -> item._2).collect(Collectors.toList());
+        List<Integer> idxs = new ArrayList<>(list.size());
+        for (Pair<Float, Integer> item : list) {
+            idxs.add(item.second);
+        }
+        return idxs;
     }
 
 

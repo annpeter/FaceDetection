@@ -18,16 +18,15 @@ package cn.annpeter.cv.facedetection.tensorflow.tflite;
 import android.graphics.RectF;
 
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
+import org.opencv.samples.facedetect.DetectResult;
 
-import javaslang.Tuple3;
 
 /**
  * Generic interface for interacting with different recognition engines.
  */
 public interface Classifier {
 
-    Tuple3<Rect[], Integer, Integer> detectObject(Mat mRgba);
+    DetectResult detectObject(Mat mRgba);
 
     /**
      * An immutable result returned by a Classifier describing what was recognized.

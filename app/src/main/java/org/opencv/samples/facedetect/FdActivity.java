@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.annpeter.cv.facedetection.tensorflow.tflite.Classifier;
 import cn.annpeter.cv.facedetection.tensorflow.tflite.TFLiteObjectDetectionAPIModel;
-import javaslang.Tuple3;
 
 import static org.opencv.imgcodecs.Imgcodecs.IMREAD_COLOR;
 import static org.opencv.imgproc.Imgproc.FONT_HERSHEY_SIMPLEX;
@@ -126,26 +125,23 @@ public class FdActivity extends CameraActivity implements CvCameraViewListener2,
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
-        Size mRgbaSize = mRgba.size();
-        System.out.println(mRgbaSize);
 
         try (InputStream is = getAssets().open("test_" + picktureIndex.get() % 4 + ".jpg")) {
             pickture = Utils.loadResource(is, IMREAD_COLOR);
+
             mRgba.release();
 
             mRgba = pickture;
 
-            Tuple3<Rect[], Integer, Integer> integerIntegerTuple3 = classifier.detectObject(mRgba);
-            Rect[] facesArray = integerIntegerTuple3._1;
+            DetectResult detectResult = classifier.detectObject(mRgba);
+            Rect[] facesArray = detectResult.getFacesArray();
 
             for (int i = 0; i < facesArray.length; i++) {
                 Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-                Imgproc.putText(mRgba, "PredictTime:" + integerIntegerTuple3._2 + ", TotalTime:" + integerIntegerTuple3._3,
+                Imgproc.putText(mRgba, "PredictTime:" + detectResult.getPredictTime() + ", TotalTime:" + detectResult.getTotalTime(),
                         new Point(20, 100), FONT_HERSHEY_SIMPLEX, 2, new Scalar(255, 255, 255), 5);
             }
 
-            Size size = pickture.size();
-            System.out.println(size);
         } catch (Exception e) {
             e.printStackTrace();
         }

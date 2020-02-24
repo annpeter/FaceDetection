@@ -422,6 +422,10 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             }
         }
 
+        if(android.os.Build.VERSION.SDK_INT < 26){
+            mScale = 0.85F;
+        }
+
         if (bmpValid && mCacheBitmap != null) {
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
@@ -470,7 +474,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     // NOTE: On Android 4.1.x the function must be called before SurfaceTexture constructor!
     protected void AllocateCache()
     {
-        mCacheBitmap = Bitmap.createBitmap(mFrameWidth, mFrameHeight, Bitmap.Config.ARGB_8888);
+        mCacheBitmap = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
     }
 
     public interface ListItemAccessor {
