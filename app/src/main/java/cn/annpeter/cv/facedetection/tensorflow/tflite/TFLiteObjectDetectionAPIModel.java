@@ -152,9 +152,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
             int[] ints = MnsUtils.singleClassNonMaxSuppression(bbox, bboxMaxScores);
 
+            float  confidence = 1;
             Rect[] rects = new Rect[ints.length];
             for (int i = 0; i < ints.length; i++) {
                 float[] bbox1 = bbox[ints[i]];
+                confidence = bboxMaxScores[i];
 
                 int xmin = Math.max(0, (int) (bbox1[0] * width));
                 int ymin = Math.max(0, (int) (bbox1[1] * height));
@@ -166,7 +168,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
             Log.d("FACE", "预测耗时" + (l2 - l) + "   总耗时：" + (System.currentTimeMillis() - l));
 
-            return new DetectResult(rects,  (int)(l2 - l),  (int) (System.currentTimeMillis() - l));
+            return new DetectResult(rects,  (int)(l2 - l),  (int) (System.currentTimeMillis() - l), confidence);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

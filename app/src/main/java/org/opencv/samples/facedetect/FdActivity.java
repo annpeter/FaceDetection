@@ -36,7 +36,6 @@ import static org.opencv.imgproc.Imgproc.FONT_HERSHEY_SIMPLEX;
 public class FdActivity extends CameraActivity implements CvCameraViewListener2, View.OnTouchListener {
 
     private static final String TAG = "OCVSample::Activity";
-    private static final Scalar FACE_RECT_COLOR = new Scalar(0, 255, 0, 255);
 
     private Classifier classifier;
     private AtomicInteger picktureIndex = new AtomicInteger(1);
@@ -126,7 +125,7 @@ public class FdActivity extends CameraActivity implements CvCameraViewListener2,
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
 
-        try (InputStream is = getAssets().open("test_" + picktureIndex.get() % 4 + ".jpg")) {
+        try (InputStream is = getAssets().open("test_" + picktureIndex.get() % 8 + ".jpg")) {
             pickture = Utils.loadResource(is, IMREAD_COLOR);
 
             mRgba.release();
@@ -137,11 +136,21 @@ public class FdActivity extends CameraActivity implements CvCameraViewListener2,
             Rect[] facesArray = detectResult.getFacesArray();
 
             for (int i = 0; i < facesArray.length; i++) {
-                Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-                Imgproc.putText(mRgba, "PredictTime:" + detectResult.getPredictTime() + ", TotalTime:" + detectResult.getTotalTime(),
-                        new Point(20, 100), FONT_HERSHEY_SIMPLEX, 2, new Scalar(255, 255, 255), 5);
-            }
+                Scalar scalar;
+                String tag;
+                if (picktureIndex.get() % 8 < 4) {
+                    tag = "FACE: ";
+                    scalar = new Scalar(0, 255, 0, 0);
+                } else {
+                    tag = "MASK: ";
+                    scalar = new Scalar(0, 0, 255, 0);
+                }
 
+                Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), scalar, 3);
+                Imgproc.putText(mRgba, tag + "PredictTime:" + detectResult.getPredictTime()
+                                + ", TotalTime:" + detectResult.getTotalTime() + ", Confidence=" + detectResult.getConfidence(),
+                        new Point(20, 100), FONT_HERSHEY_SIMPLEX, 2, scalar, 5);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

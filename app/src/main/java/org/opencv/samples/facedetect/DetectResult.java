@@ -11,4 +11,6 @@ public class DetectResult {
     private Rect[] facesArray;
     private int predictTime;
     private int totalTime;
+
+    private float confidence;
 }
