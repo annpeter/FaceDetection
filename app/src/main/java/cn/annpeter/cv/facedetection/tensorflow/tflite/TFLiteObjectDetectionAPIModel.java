@@ -154,7 +154,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
             float  confidence = 1;
             Rect[] rects = new Rect[ints.length];
-            for (int i = 0; i < ints.length; i++) {
+            for (int i = 0; i < 1; i++) {
                 float[] bbox1 = bbox[ints[i]];
                 confidence = bboxMaxScores[i];
 
