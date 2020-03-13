@@ -100,7 +100,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     }
 
 
-    private MatOfFloat4 conver(Mat gray) {
+    private MatOfFloat4 convert(Mat gray) {
         Mat resizeOut = new Mat();
         Imgproc.resize(gray, resizeOut, new Size(260, 260));
 
@@ -121,7 +121,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
         MatOfFloat4 colorOut = null;
         try {
-            colorOut = conver(mRgba);
+            colorOut = convert(mRgba);
             Size size = mRgba.size();
             int width = (int) size.width;
             int height = (int) size.height;
